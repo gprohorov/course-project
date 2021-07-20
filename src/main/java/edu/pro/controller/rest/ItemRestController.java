@@ -9,9 +9,7 @@ package edu.pro.controller.rest;/*
 import edu.pro.model.Item;
 import edu.pro.service.item.impls.ItemServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +36,16 @@ public class ItemRestController {
     @RequestMapping("/delete/{id}")
     public Item delete(@PathVariable("id") String id){
         return service.delete(id);
+    }
+
+    @PostMapping("/create")
+    public Item create(@RequestBody Item item){
+        return service.create(item);
+    }
+
+    @PostMapping("/update")
+    public Item update(@RequestBody Item item){
+        return service.update(item);
     }
 
 
