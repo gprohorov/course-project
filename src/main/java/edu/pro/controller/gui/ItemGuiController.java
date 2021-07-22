@@ -6,13 +6,13 @@ package edu.pro.controller.gui;/*
   @since 20.07.21 - 12.34
 */
 
+import edu.pro.form.ItemCreateForm;
 import edu.pro.model.Item;
 import edu.pro.service.item.impls.ItemServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,12 +30,11 @@ public class ItemGuiController {
         return "items";
     }
 
-    @RequestMapping("/delete/{id}")
+    @RequestMapping(value = "/delete/{id}")
     public String delete(Model model,@PathVariable("id") String id){
         service.delete(id);
-        List<Item> items = service.getAll();
-        model.addAttribute("items", items);
-        return "items";
+
+        return "redirect:/gui/item/all";
     }
 
     @RequestMapping("/update/{id}")
@@ -44,6 +43,24 @@ public class ItemGuiController {
         model.addAttribute("items", items);
         return "items";
     }
+
+    @GetMapping("/create")
+    public String create(Model model){
+        ItemCreateForm formToCreate = new ItemCreateForm();
+        model.addAttribute("form", formToCreate);
+        return "item-create";
+    }
+        @PostMapping("/create")
+    public String create( @ModelAttribute("form") ItemCreateForm form){
+            Item item = new Item();
+            item.setName(form.getName());
+            item.setDesc(form.getDesc());
+            service.create(item);
+
+            return "redirect:/gui/item/all";
+    }
+
+
 
 
 
