@@ -7,6 +7,7 @@ package edu.pro.controller.gui;/*
 */
 
 import edu.pro.form.ItemCreateForm;
+import edu.pro.form.ItemUpdateForm;
 import edu.pro.model.Item;
 import edu.pro.service.item.impls.ItemServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +32,12 @@ public class ItemGuiController {
     }
 
     @RequestMapping(value = "/delete/{id}")
-    public String delete(Model model,@PathVariable("id") String id){
+    public String delete(Model model, @PathVariable("id") String id){
         service.delete(id);
 
         return "redirect:/gui/item/all";
     }
 
-    @RequestMapping("/update/{id}")
-    public String update(Model model,@PathVariable("id") String id){
-        List<Item> items = service.getAll();
-        model.addAttribute("items", items);
-        return "items";
-    }
 
     @GetMapping("/create")
     public String create(Model model){
@@ -60,6 +55,34 @@ public class ItemGuiController {
             return "redirect:/gui/item/all";
     }
 
+
+    @GetMapping("/update/{id}")
+    public String update(Model model, @PathVariable("id") String id){
+        Item item = service.get(id);
+        ItemUpdateForm formToUpdate = new ItemUpdateForm();
+
+        formToUpdate.setId(item.getId());
+        formToUpdate.setName(item.getName());
+        formToUpdate.setDesc(item.getDesc());
+        formToUpdate.setCreatedAt(item.getCreatedAt());
+        formToUpdate.setUpdatedAt(item.getUpdatedAt());
+
+        model.addAttribute("form", formToUpdate);
+        return "item-update";
+    }
+
+    @PostMapping("/update/{id}")
+    public String update( @ModelAttribute("form") ItemUpdateForm form){
+        Item item = new Item();
+        item.setId(form.getId());
+        item.setName(form.getName());
+        item.setDesc(form.getDesc());
+        item.setCreatedAt(form.getCreatedAt());
+
+        service.update(item);
+
+        return "redirect:/gui/item/all";
+    }
 
 
 
