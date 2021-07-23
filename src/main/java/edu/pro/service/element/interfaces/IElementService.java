@@ -7,16 +7,16 @@ package edu.pro.service.element.interfaces;/*
 */
 
 import edu.pro.model.Element;
-import edu.pro.model.Item;
+import edu.pro.model.Element;
 
 import java.util.List;
 
 public interface IElementService {
 
     Element create(Element element);
-    Item get(String id);
-    Item update(Item item);
-    Item  delete(String id);
-    List<Item> getAll();
+    Element get(String id);
+    Element update(Element element);
+    Element  delete(String id);
+    List<Element> getAll();
 
 }
