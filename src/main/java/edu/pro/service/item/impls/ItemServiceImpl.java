@@ -8,10 +8,12 @@ package edu.pro.service.item.impls;/*
 
 import edu.pro.model.Item;
 import edu.pro.repository.FakeItemRepository;
+import edu.pro.repository.ItemMongoRepository;
 import edu.pro.service.item.interfaces.IItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,32 +24,48 @@ import java.util.List;
 public class ItemServiceImpl implements IItemService {
 
     @Autowired
-    FakeItemRepository repository;
+    FakeItemRepository fakeRepository;
+
+    @Autowired
+    ItemMongoRepository mongoRepository;
+
+    @PostConstruct
+    void init(){
+        List<Item> items = mongoRepository.findAll();
+        if(items.isEmpty()) {
+            items = fakeRepository.getAll();
+            mongoRepository.saveAll(items);
+        }
+    }
 
     @Override
     public Item create(Item item) {
-
-        return repository.create(item);
+     item.setCreatedAt(LocalDateTime.now());
+     item.setUpdatedAt(LocalDateTime.now());
+        return mongoRepository.save(item);
     }
 
     @Override
     public Item get(String id) {
-        return repository.get(id);
+        return mongoRepository.findById(id).orElse(null);
     }
 
     @Override
     public Item update(Item item) {
-        return repository.update(item);
+        item.setUpdatedAt(LocalDateTime.now());
+        return mongoRepository.save(item);
     }
 
     @Override
     public Item delete(String id) {
-        return repository.delete(id);
+        Item item = mongoRepository.findById(id).get();
+        mongoRepository.deleteById(id);
+        return item;
     }
 
     @Override
     public List<Item> getAll() {
 
-        return repository.getAll();
+        return mongoRepository.findAll();
     }
 }
